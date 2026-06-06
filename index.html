@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thư Viện Tài Nguyên Học Tập</title>
+  
+  <!-- Google Fonts - Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Prism.js for syntax highlighting (Tomorrow Night Theme) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  
+  <style>
+    /* RESET & BASE STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    :root {
+      --bg-color: #080b11;
+      --surface-color: rgba(17, 24, 39, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --primary-accent: #8b5cf6; /* Violet */
+      --secondary-accent: #06b6d4; /* Cyan */
+      --gradient-accent: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+    
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* APP CONTAINER */
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem 1rem;
+    }
+    
+    /* HEADER */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .logo-icon {
+      font-size: 2.5rem;
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 10px rgba(139, 92, 246, 0.4));
+    }
+    
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.75rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      font-weight: 300;
+      margin-top: 0.5rem;
+    }
+
+    /* STATUS BADGE */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.4rem 0.8rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #34d399;
+    }
+
+    .status-indicator.offline {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+    }
+
+    .status-indicator .dot {
+      width: 8px;
+      height: 8px;
+      background-color: currentColor;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px currentColor;
+    }
+    
+    /* CONTROLS (SEARCH & FILTERS) */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      background: rgba(17, 24, 39, 0.5);
+      padding: 1.5rem;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    
+    .search-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.25rem 1rem 3.25rem;
+      background: rgba(8, 11, 17, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+    }
+    
+    .search-input:focus {
+      border-color: var(--primary-accent);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+    }
+    
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .filter-btn {
+      padding: 0.6rem 1.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+    
+    .filter-btn.active {
+      background: var(--gradient-accent);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+    
+    /* RESOURCES GRID */
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+    
+    /* CARD STYLES */
+    .resource-card {
+      background: var(--surface-color);
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    
+    .resource-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--gradient-accent);
+      opacity: 0.8;
+    }
+    
+    .resource-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(139, 92, 246, 0.08);
+    }
+    
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    
+    .badge-code {
+      background: rgba(139, 92, 246, 0.15);
+      color: #a78bfa;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+    
+    .badge-tool {
+      background: rgba(6, 182, 212, 0.15);
+      color: #22d3ee;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    .badge-video {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+    
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+    
+    /* CODE BLOCK PREVIEW */
+    .code-preview-wrapper {
+      margin-bottom: 1.5rem;
+      border-radius: 12px;
+      overflow: hidden;
+      max-height: 180px;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .code-preview-wrapper pre {
+      margin: 0 !important;
+      font-size: 0.8rem !important;
+      padding: 1rem !important;
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    .copy-btn-inline {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      padding: 0.4rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    
+    .copy-btn-inline:hover {
+      background: rgba(31, 41, 55, 1);
+      color: var(--text-primary);
+    }
+    
+    /* CARD ACTIONS */
+    .card-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 1.25rem;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--gradient-accent);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    /* MODAL FOR VIDEO */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(8, 11, 17, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal-content {
+      width: 90%;
+      max-width: 800px;
+      aspect-ratio: 16/9;
+      background: #111827;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: -3rem;
+      right: 0;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+    }
+    
+    .modal-close:hover {
+      opacity: 0.8;
+    }
+    
+    .video-wrapper {
+      width: 100%;
+      height: 100%;
+    }
+    
+    .video-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #10b981;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    /* LOADER */
+    .loader-container {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 0;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(139, 92, 246, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary-accent);
+      animation: spin 1s ease-in-out infinite;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .resources-grid {
+        grid-template-columns: 1fr;
+      }
+      .controls {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <div class="logo-container">
+        <i class="fa-solid fa-graduation-cap logo-icon"></i>
+      </div>
+      <h1>THƯ VIỆN HỌC TẬP</h1>
+      <p class="subtitle">Kho tài nguyên mã nguồn, công cụ và bài giảng chất lượng cao</p>
+      <div id="statusIndicator" class="status-indicator">
+        <span class="dot"></span>
+        <span id="statusText">Kết nối trực tuyến Firebase</span>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm tài liệu, công cụ hoặc bài giảng...">
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-btn active" data-filter="all">
+          <i class="fa-solid fa-list"></i> Tất cả
+        </button>
+        <button class="filter-btn" data-filter="code">
+          <i class="fa-solid fa-code"></i> Mã nguồn
+        </button>
+        <button class="filter-btn" data-filter="tool">
+          <i class="fa-solid fa-toolbox"></i> Công cụ
+        </button>
+        <button class="filter-btn" data-filter="video">
+          <i class="fa-solid fa-video"></i> Bài giảng
+        </button>
+      </div>
+    </div>
+
+    <main class="resources-grid" id="resourcesGrid">
+      <div class="loader-container" id="loader">
+        <div class="spinner"></div>
+        <p>Đang tải tài nguyên học tập...</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- YOUTUBE VIDEO MODAL -->
+  <div class="modal" id="videoModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+      <div class="video-wrapper">
+        <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check"></i> Đã sao chép mã nguồn vào bộ nhớ đệm!
+  </div>
+
+  <!-- Client-side Logic Script -->
+  <script>
+    // Liên kết trực tiếp tới cơ sở dữ liệu Firebase Realtime Database của bạn
+    const FIREBASE_DB_URL = "https://tinhoc-123d7-default-rtdb.asia-southeast1.firebasedatabase.app/resources.json";
+
+    // Dữ liệu mẫu (Tự động hiển thị khi mất mạng hoặc Firebase bị chặn bởi Adblocker)
+    const fallbackData = [
+      {
+        id: "1",
+        type: "code",
+        title: "Cấu trúc điều kiện C++ (if-else)",
+        description: "Mã nguồn hướng dẫn sử dụng cấu trúc rẽ nhánh if-else cơ bản trong ngôn ngữ lập trình C++.",
+        code: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int test = 15;\n    if (test > 10) {\n        cout << "Lớn hơn 10" << endl;\n    } else {\n        cout << "Nhỏ hơn hoặc bằng 10" << endl;\n    }\n    return 0;\n}`,
+        youtubeId: "dQw4w9WgXcQ",
+        downloadUrl: ""
+      },
+      {
+        id: "2",
+        type: "tool",
+        title: "Visual Studio Code (VS Code)",
+        description: "Trình biên soạn code nhẹ, mạnh mẽ, đa nền tảng. Khuyên dùng cho tất cả học viên học lập trình Web, Python, C++.",
+        code: "",
+        youtubeId: "8_D-L4N4W2E",
+        downloadUrl: "https://code.visualstudio.com/download"
+      },
+      {
+        id: "3",
+        type: "video",
+        title: "Hướng dẫn xây dựng Web đơn giản",
+        description: "Video giảng giải chi tiết các thẻ HTML cơ bản và cách viết CSS để làm đẹp giao diện web từ số 0.",
+        code: `<!DOCTYPE html>\n<html>\n<head>\n  <title>Trang web đầu tiên</title>\n  <style>\n    body { background: #fafafa; font-family: sans-serif; }\n  </style>\n</head>\n<body>\n  <h1>Chào mừng bạn đến với lớp học lập trình!</h1>\n</body>\n</html>`,
+        youtubeId: "1Rs2ND1ryYc",
+        downloadUrl: ""
+      }
+    ];
+
+    let allResources = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // DOM Elements
+    const resourcesGrid = document.getElementById('resourcesGrid');
+    const searchInput = document.getElementById('searchInput');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const videoModal = document.getElementById('videoModal');
+    const modalClose = document.getElementById('modalClose');
+    const videoIframe = document.getElementById('videoIframe');
+    const toast = document.getElementById('toast');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+
+    // Load Data directly from client side
+    async function loadData() {
+      // Show loading spinner initially
+      resourcesGrid.innerHTML = `
+        <div class="loader-container" id="loader">
+          <div class="spinner"></div>
+          <p>Đang tải tài nguyên học tập...</p>
+        </div>
+      `;
+
+      try {
+        console.log("Đang tải dữ liệu từ Firebase:", FIREBASE_DB_URL);
+        const response = await fetch(FIREBASE_DB_URL);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        let data = await response.json();
+        
+        if (data) {
+          // Xử lý nếu trỏ nhầm vào node gốc thay vì node resources
+          if (data.resources && typeof data.resources === 'object' && !data.title) {
+            data = data.resources;
+          }
+
+          // Convert to Array
+          if (Array.isArray(data)) {
+            allResources = data.filter(Boolean);
+          } else if (typeof data === 'object') {
+            allResources = Object.keys(data).map(key => ({
+              id: key,
+              ...data[key]
+            }));
+          }
+        }
+
+        if (!allResources || allResources.length === 0) {
+          allResources = fallbackData;
+        }
+
+        // Cập nhật trạng thái trực tuyến thành công
+        statusIndicator.className = "status-indicator";
+        statusText.textContent = "Kết nối trực tuyến Firebase";
+        
+      } catch (error) {
+        console.warn("Không thể tải Firebase. Chuyển sang dữ liệu ngoại tuyến/mẫu:", error);
+        
+        // Cập nhật giao diện thông báo trạng thái Offline
+        statusIndicator.className = "status-indicator offline";
+        statusText.textContent = "Chế độ Offline (Hiển thị dữ liệu mẫu)";
+        
+        allResources = fallbackData;
+      } finally {
+        renderResources();
+      }
+    }
+
+    // Render resources to HTML
+    function renderResources() {
+      resourcesGrid.innerHTML = '';
+      
+      const filtered = allResources.filter(item => {
+        if (!item) return false;
+        const title = String(item.title || '').toLowerCase();
+        const description = String(item.description || '').toLowerCase();
+        const type = String(item.type || 'code').toLowerCase();
+        
+        const matchesFilter = currentFilter === 'all' || type === currentFilter;
+        const matchesSearch = title.includes(searchQuery.toLowerCase()) || 
+                              description.includes(searchQuery.toLowerCase());
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        resourcesGrid.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-folder-open"></i>
+            <h3>Không tìm thấy tài nguyên</h3>
+            <p>Vui lòng tìm kiếm với từ khóa khác.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'resource-card';
+        
+        const type = String(item.type || 'code').toLowerCase();
+        const title = item.title || 'Không có tiêu đề';
+        const description = item.description || 'Không có mô tả';
+        
+        let badgeHtml = '';
+        if (type === 'code') {
+          badgeHtml = `<span class="badge badge-code"><i class="fa-solid fa-code"></i> Code</span>`;
+        } else if (type === 'tool') {
+          badgeHtml = `<span class="badge badge-tool"><i class="fa-solid fa-toolbox"></i> Công cụ</span>`;
+        } else if (type === 'video') {
+          badgeHtml = `<span class="badge badge-video"><i class="fa-solid fa-video"></i> Video</span>`;
+        }
+
+        let codePreviewHtml = '';
+        if (item.code) {
+          const escapedCode = String(item.code)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+            
+          codePreviewHtml = `
+            <div class="code-preview-wrapper">
+              <button class="copy-btn-inline" title="Sao chép" onclick="copyCode(event, '${encodeURIComponent(item.code)}')">
+                <i class="fa-solid fa-copy"></i>
+              </button>
+              <pre><code class="language-javascript">${escapedCode}</code></pre>
+            </div>
+          `;
+        }
+
+        const playBtn = item.youtubeId ? `
+          <button class="btn btn-secondary" onclick="openVideo('${item.youtubeId}')">
+            <i class="fa-solid fa-play"></i> Video HD
+          </button>
+        ` : '';
+
+        const actionBtn = type === 'tool' && item.downloadUrl ? `
+          <a href="${item.downloadUrl}" target="_blank" class="btn btn-primary">
+            <i class="fa-solid fa-download"></i> Tải Ngay
+          </a>
+        ` : (item.code ? `
+          <button class="btn btn-primary" onclick="copyCode(event, '${encodeURIComponent(item.code)}')">
+            <i class="fa-solid fa-copy"></i> Sao chép Code
+          </button>
+        ` : '');
+
+        card.innerHTML = `
+          <div class="card-meta">
+            ${badgeHtml}
+          </div>
+          <h3 class="card-title">${title}</h3>
+          <p class="card-desc">${description}</p>
+          ${codePreviewHtml}
+          <div class="card-actions">
+            ${playBtn}
+            ${actionBtn}
+          </div>
+        `;
+
+        resourcesGrid.appendChild(card);
+      });
+
+      // Highlight syntax using Prism
+      if (window.Prism) {
+        Prism.highlightAllUnder(resourcesGrid);
+      }
+    }
+
+    // Copy to Clipboard
+    function copyCode(e, encodedCode) {
+      if (e) e.stopPropagation();
+      const code = decodeURIComponent(encodedCode);
+      navigator.clipboard.writeText(code).then(() => {
+        showToast();
+      }).catch(err => {
+        console.error("Lỗi khi sao chép:", err);
+      });
+    }
+
+    // Show Copy Toast
+    function showToast() {
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Modal Control for Videos
+    function openVideo(youtubeId) {
+      videoIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
+      videoModal.classList.add('active');
+    }
+
+    function closeModal() {
+      videoModal.classList.remove('active');
+      videoIframe.src = '';
+    }
+
+    // Events
+    modalClose.addEventListener('click', closeModal);
+    videoModal.addEventListener('click', (e) => {
+      if (e.target === videoModal) closeModal();
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderResources();
+    });
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderResources();
+      });
+    });
+
+    // Run loadData immediately without waiting for DOMContentLoaded (since script is at the bottom)
+    loadData();
+  </script>
+  
+  <!-- Load Prism.js for Dynamic Syntax Highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
