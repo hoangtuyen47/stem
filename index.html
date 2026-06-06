@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thư Viện Tài Nguyên Học Tập</title>
+  <title>Thư viện học tập Mr. Tuyên</title>
   
-  <!-- Google Fonts - Inter & Outfit -->
+  <!-- Google Fonts - Inter & Be Vietnam Pro -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -94,7 +94,7 @@
     }
     
     h1 {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Be Vietnam Pro', sans-serif;
       font-size: 2.75rem;
       font-weight: 800;
       background: linear-gradient(to right, #ffffff, #cbd5e1);
@@ -110,35 +110,7 @@
       margin-top: 0.5rem;
     }
 
-    /* STATUS BADGE */
-    .status-indicator {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 1rem;
-      padding: 0.4rem 0.8rem;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #34d399;
-    }
 
-    .status-indicator.offline {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.2);
-      color: #fbbf24;
-    }
-
-    .status-indicator .dot {
-      width: 8px;
-      height: 8px;
-      background-color: currentColor;
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 8px currentColor;
-    }
     
     /* CONTROLS (SEARCH & FILTERS) */
     .controls {
@@ -295,7 +267,7 @@
     }
     
     .card-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Be Vietnam Pro', sans-serif;
       font-size: 1.35rem;
       font-weight: 600;
       margin-bottom: 0.75rem;
@@ -544,12 +516,8 @@
       <div class="logo-container">
         <i class="fa-solid fa-graduation-cap logo-icon"></i>
       </div>
-      <h1>THƯ VIỆN HỌC TẬP</h1>
-      <p class="subtitle">Kho tài nguyên mã nguồn, công cụ và bài giảng chất lượng cao</p>
-      <div id="statusIndicator" class="status-indicator">
-        <span class="dot"></span>
-        <span id="statusText">Kết nối trực tuyến Firebase</span>
-      </div>
+      <h1>THƯ VIỆN HỌC TẬP MR. TUYÊN</h1>
+      <p class="subtitle">Nguồn học liệu, công cụ... phục vụ các lớp STEM, IoT, Kỹ năng số của thầy Tuyên</p>
     </header>
 
     <div class="controls">
@@ -644,8 +612,7 @@
     const modalClose = document.getElementById('modalClose');
     const videoIframe = document.getElementById('videoIframe');
     const toast = document.getElementById('toast');
-    const statusIndicator = document.getElementById('statusIndicator');
-    const statusText = document.getElementById('statusText');
+
 
     // Load Data directly from client side
     async function loadData() {
@@ -688,17 +655,8 @@
           allResources = fallbackData;
         }
 
-        // Cập nhật trạng thái trực tuyến thành công
-        statusIndicator.className = "status-indicator";
-        statusText.textContent = "Kết nối trực tuyến Firebase";
-        
       } catch (error) {
         console.warn("Không thể tải Firebase. Chuyển sang dữ liệu ngoại tuyến/mẫu:", error);
-        
-        // Cập nhật giao diện thông báo trạng thái Offline
-        statusIndicator.className = "status-indicator offline";
-        statusText.textContent = "Chế độ Offline (Hiển thị dữ liệu mẫu)";
-        
         allResources = fallbackData;
       } finally {
         renderResources();
